@@ -18,6 +18,13 @@
 	crossorigin="anonymous"></script>
 </head>
 <body>
+	
+	<c:if test="${msg!=null }">
+		<script type="text/javascript">
+			alert("비밀번호가 틀렸습니다.");
+		</script>
+	</c:if>
+	
 	<h2 class="bg-secondary text-lgiht" style="margin:0;">전체 게시글 보기</h2>
 	<table class="table table-dark table-striped-columns table-hover">
 		<tr>

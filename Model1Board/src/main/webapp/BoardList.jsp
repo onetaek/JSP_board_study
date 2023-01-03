@@ -45,10 +45,11 @@
 
 	//현재 페이지에 보여줄 시작 번호를 설정 = 데이터 베이스에서 불러올 시작번호
 	int startRow = (currentPage - 1) * pageSize + 1;
-	int endRow = currentPage * pageSize;
-
+	//int endRow = currentPage * pageSize;
+	int endRow = -1;
+	
 	//최신글 10개를 기준으로  게시글을 리턴 받아주는 메소드 호출
-	Vector<BoardBean> vec = bdao.getAllBoard(startRow, endRow);
+	Vector<BoardBean> vec = bdao.getAllBoard(startRow, pageSize);
 
 	//테이블에 표시할 번호 지정
 	number = count - (currentPage - 1) * pageSize;
@@ -96,27 +97,29 @@
 	<p style="text-align:center;">
 	<!-- 페이지 카운터링 소스를 작성 -->
 	<%
+		int pageBlock = 7;//카운터링 처리 숫자
+		
 		if(count > 0 ){
 			//카운터링 숫자를 얼마까지 보여줄건지 결정
 			int pageCount = count / pageSize + (count%pageSize == 0? 0 : 1 );
 			
 			//시작페이지 숫자를 설정
 			int startPage = 1;
-			if(currentPage % 10 != 0 ){
-				startPage = (currentPage / 10)* 10 + 1;//10부터할꺼냐 11부터할꺼야
+			if(currentPage % pageBlock != 0 ){
+				startPage = (currentPage / pageBlock)* pageBlock + 1;//10부터할꺼냐 11부터할꺼야
 			}else{
-				startPage = ((currentPage / 10)* 10 + 1)*10 + 1;//10부터할꺼냐 11부터할꺼야
+				startPage = ((currentPage / pageBlock) - 1)*pageBlock + 1;//10부터할꺼냐 11부터할꺼야
 			}
 			
-			int pageBlock = 10;//카운터링 처리 숫자
+			
 			int endPage = startPage + pageBlock - 1; //화면에 보여질 페이지의 마지막 숫자
 			
 			if(endPage > pageCount) endPage = pageCount;
 			
 			//이전이라는 링크를 만들건지 파악
-			if(startPage > 10 ){
+			if(startPage > pageBlock ){
 	%>
-		<a href="BoardList.jsp?pageNum=<%=startPage-10 %>">[이전]</a>
+		<a href="BoardList.jsp?pageNum=<%=startPage-pageBlock %>">[이전]</a>
 	<%		
 			}
 			//페이징 처리
@@ -128,14 +131,16 @@
 			//다음이라는 링크를 만들건지 파악
 			if(endPage< pageCount){
 			%>
-				<a href="BoardList.jsp?pageNum=<%=startPage+10 %>">[다음]</a>
+				<a href="BoardList.jsp?pageNum=<%=startPage+pageBlock %>">[다음]</a>
 			<%
 			}
-			
 		}
 	%>
 	</p>
+	<%
+
 	
+	%>
 	
 </body>
 </html>

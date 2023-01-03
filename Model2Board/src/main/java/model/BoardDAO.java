@@ -193,10 +193,112 @@ public class BoardDAO {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
+
+	}
+	
+	//조회수를 증가하지 않는 하나의 게시글을 리턴하는 메소드
+	public BoardBean getOneUpdateBoard(int num) {
+		getCon();
+		BoardBean bean = null;
 		
+		try {
+			//한 게시글에 대한 정보를 리턴해주는 쿼리를 작성
+			String sql = "select * from board where num = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, num);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				bean = new BoardBean();
+				bean.setNum(rs.getInt(1));
+				bean.setWriter(rs.getString(2));
+				bean.setEmail(rs.getString(3));
+				bean.setSubject(rs.getString(4));
+				bean.setPassword(rs.getString(5));
+				bean.setReg_date(rs.getDate(6).toString());
+				bean.setRef(rs.getInt(7));
+				bean.setRe_step(rs.getInt(8));
+				bean.setRe_level(rs.getInt(9));
+				bean.setReadcount(rs.getInt(10));
+				bean.setContent(rs.getString(11));
+			}
+			con.close();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
 		
+		return bean;
+	}
+	
+	public void updateBoard(int num, String subject, String content) {
+		getCon();
+		try {
+			//3.쿼리준비 쿼리실행할객체 선언
+			String sql = "update board set subject = ?, content = ? where num =?";
+			//?에 값을 대입
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, subject);
+			pstmt.setString(2, content);
+			pstmt.setInt(3, num);
+			pstmt.executeUpdate();
+			con.close();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
 		
 	}
+	
+	//하나의 게시글을 삭제하는 메소드
+	public void deleteBoard(int num) {
+		getCon();
+		try {
+			String sql = "delete from board where num = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, num);
+			pstmt.executeQuery();
+			con.close();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+	}
+
+	public void insertDummy() {
+		// TODO Auto-generated method stub
+		getCon();
+		
+		int ref = 0;
+		int re_step = 1;//새글이기에
+		int re_level = 1;//새글이기에
+		
+		try {
+			String refsql = "select max(ref) from board";
+			pstmt = con.prepareStatement(refsql);
+			//쿼리 실행후 결과를 리턴
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				ref = rs.getInt(1)+1;//가장 큰 값에 1을 더한값	
+			}
+			String sql = "insert into board values(nextval('board'),?,?,?,?,now(),?,?,?,0,?)";
+			pstmt = con.prepareStatement(sql);
+			// ?에 맵핑
+			pstmt.setString(1, "더미 작성자"+ref);
+			pstmt.setString(2, "더미@naver.com");
+			pstmt.setString(3, "더미 제목"+ref);
+			pstmt.setString(4, "1234");
+			pstmt.setInt(5, ref);
+			pstmt.setInt(6, re_step);
+			pstmt.setInt(7, re_level);
+			pstmt.setString(8, "더미더미더미더미더미더미더미");
+			pstmt.executeUpdate();
+			con.close();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+	}
+	
 	
 	
 }

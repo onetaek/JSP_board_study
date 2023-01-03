@@ -47,7 +47,7 @@
 					<input type="hidden" name="re_step" value="${re_step }"/>
 					<input type="hidden" name="re_level" value="${re_level }"/>
 					<input type="submit" value="답글 쓰기 완료" /> 
-					<input type="reset" value="취소" /> 
+					<input type="reset" value="취소" />
 					<input onclick="location.href='BoardListCon.do'" type="button" value="전체글보기" />
 				</td>
 			</tr>

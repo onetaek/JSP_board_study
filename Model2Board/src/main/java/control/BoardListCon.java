@@ -15,7 +15,8 @@ import model.BoardDAO;
 
 @WebServlet("/BoardListCon.do")
 public class BoardListCon extends HttpServlet {
-	
+	private static final long serialVersionUID = 1L;
+
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		reqPro(request, response);
 	}
@@ -46,18 +47,22 @@ public class BoardListCon extends HttpServlet {
 		
 		//현재 보여질 페이지 시작 번호를 설정
 		int startRow = (currentPage -1)*pageSize + 1;
-		int endRow = currentPage * pageSize;
-		
+		//int endRow = currentPage * pageSize;
+		int endRow = -1;
 		//최신글 10개를 기준으로 게시글을 리턴받아주는 메소드 호출
 		Vector<BoardBean> v = bdao.getAllBoard(startRow,endRow);
 		number = count - (currentPage - 1) * pageSize;
 		
+		
+		////////////////수정,삭제 시 비밀번호가 틀렸다면
+		String msg = (String)request.getAttribute("msg");
 		//////////////////////////////////////BoardList.jsp쪽으로 request객체에 담아서 넘겨줌
 		request.setAttribute("v", v);
 		request.setAttribute("number", number);
 		request.setAttribute("pageSize", pageSize);
 		request.setAttribute("count", count);
 		request.setAttribute("currentPage", currentPage);
+		request.setAttribute("msg",msg);
 		
 		RequestDispatcher dis = request.getRequestDispatcher("BoardList.jsp");
 		dis.forward(request, response);

@@ -1,45 +1,49 @@
 package model;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Vector;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
 
 public class BoardDAO {
 	Connection con;
 	PreparedStatement pstmt;
 	ResultSet rs;
-
-	String dbID = "dnjsxorchlrh";
-    String dbPassword = "apink419!";
-    String dbURL = "jdbc:mysql://localhost:3306/dnjsxorchlrh?useUnicode=true&useJDBCCompliantTimezoneShift"
-    		+ "=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
- 
-    
-	public void getCon(){
-		 try{   		
-			    Class.forName("org.gjt.mm.mysql.Driver");
-			    con = DriverManager.getConnection(dbURL, dbID, dbPassword);
-		    }catch(Exception e){
-		    	e.printStackTrace();
-		   	}
-	}
+//
+//	String dbID = "dnjsxorchlrh";
+//    String dbPassword = "apink419!";
+//    String dbURL = "jdbc:mysql://localhost:3306/system?useUnicode=true&useJDBCCompliantTimezoneShift"
+//    		+ "=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+// 
+//    
+//	public void getCon(){
+//		 try{   		
+//			    Class.forName("org.gjt.mm.mysql.Driver");
+//			    con = DriverManager.getConnection(dbURL, dbID, dbPassword);
+//			    System.out.println("연결이 완료되었습니다.");
+//		    }catch(Exception e){
+//		    	e.printStackTrace();
+//		   	}
+//	}
 	
 	
 	// 데이터 베이스의 커넥션풀을사용하도록 설정하는 메도스
-//	public void getCon() {
-//		try {
-//			// 커넥션풀에서 DataSource를 사용할 수 있도록하는 세팅
-//			Context initctx = new InitialContext();
-//			Context envctx = (Context) initctx.lookup("java:comp/env");
-//			DataSource ds = (DataSource) envctx.lookup("jdbc/pool");
-//			con = ds.getConnection();
-//		} catch (Exception e) {
-//			// TODO: handle exception
-//			e.printStackTrace();
-//		}
-//	}
+	public void getCon() {
+		try {
+			// 커넥션풀에서 DataSource를 사용할 수 있도록하는 세팅
+			Context initctx = new InitialContext();
+			Context envctx = (Context) initctx.lookup("java:comp/env");
+			DataSource ds = (DataSource) envctx.lookup("jdbc/pool");
+			con = ds.getConnection();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+	}
 
 	// 하나의 새로운 게시글이 넘어와서 저장되는 메소드
 	public void insertBoard(BoardBean bean) {
@@ -91,8 +95,9 @@ public class BoardDAO {
 
 			try {
 				// 쿼리준비
-				String sql = "SELECT * FROM (SELECT T.*, @rownum:=@rownum+1 rownum FROM (SELECT @rownum:=0) r,"
-						+"(select *from board order by ref desc ,re_step ASC) T) A WHERE rownum >= ? AND rownum <= ?";
+//				String sql = "SELECT * FROM (SELECT T.*, @rownum:=@rownum+1 rownum FROM (SELECT @rownum:=0) r,"
+//						+"(select *from board order by ref desc ,re_step ASC) T) A WHERE rownum >= ? AND rownum <= ?";
+				String sql = "select * from board order by ref desc, re_step asc limit ?, ?";
 				// 쿼리를 실행할 객체선언
 				pstmt = con.prepareStatement(sql);
 				pstmt.setInt(1, start-1);
